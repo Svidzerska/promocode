@@ -149,6 +149,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
    controller.getInputValue();
 
+
+   //for code generating
    controller.pressButton();
    controller.pressButtonGo();
 
