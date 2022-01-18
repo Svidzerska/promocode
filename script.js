@@ -17,22 +17,22 @@ document.addEventListener("DOMContentLoaded", () => {
          this.view = view;
          this.model = model;
          this.firstEvaluation = this.firstEvaluation.bind(this);
-         this.promocodeToArr = this.promocodeToArr.bind(this);
          this.mainEvaluation = this.mainEvaluation.bind(this);
          this.promocodeOneHundred = this.promocodeOneHundred.bind(this);
          this.promocodeThousand = this.promocodeThousand.bind(this);
          this.generateCode = this.generateCode.bind(this);
-         // this.getInputValue = this.getInputValue.bind(this);
+      }
+
+      get result() {
+         return this.mainResult;
       }
 
       promocodeThousand(promocodeAsArr, index_odd) {
-         console.log(index_odd);
          let quantityOfPairs = 0;
          let diffPair = 0;
 
          for (let i = 0; i < index_odd.length; i++) {
             if (index_odd[i + 1] - index_odd[i] === 1 && (i === 0 || promocodeAsArr[index_odd[i] - 1] % 2 === 0)) {
-               console.log(`${promocodeAsArr[index_odd[i]]}${promocodeAsArr[index_odd[i + 1]]}`);
                if (promocodeAsArr[index_odd[i]] < promocodeAsArr[index_odd[i + 1]]) {
                   diffPair++;
                }
@@ -45,19 +45,16 @@ document.addEventListener("DOMContentLoaded", () => {
             this.promocodeOneHundred(promocodeAsArr);
          } else if (quantityOfPairs >= 2) {
             if (diffPair >= 2) {
-               console.log(2000);
                this.view.result.innerText = "2000";
+               this.mainResult = 2000;
+               console.log(this.result);
             } else {
-               console.log(1000);
                this.view.result.innerText = "1000";
+               this.mainResult = 1000;
+               console.log(this.result);
             }
          }
       }
-
-      // get result() {
-      //    console.log(this);
-      //    return this.getInputValue();
-      // }
 
 
       promocodeOneHundred(promocodeAsArr) {
@@ -72,23 +69,20 @@ document.addEventListener("DOMContentLoaded", () => {
             }
          }
 
-         console.log(summ_odd, summ_even);//
-
          if (summ_odd < summ_even) {
             this.view.result.innerText = "100";
-            console.log(100);
-            // return 100;
+            this.mainResult = 100;
+            console.log(this.result);
 
          } else {
             this.view.result.innerText = "no";
-            console.log(0);
-            // return 0;
+            this.mainResult = 0;
+            console.log(this.result);
          }
       }
 
 
       mainEvaluation(promocodeAsArr) {
-         console.log(promocodeAsArr);//
          //определяем какой промокод имеем
          let index_odd = [];
          for (let i = 0; i < promocodeAsArr.length; i++) {
@@ -98,43 +92,33 @@ document.addEventListener("DOMContentLoaded", () => {
          }
 
          if (index_odd.length < 4) {
-            this.result(promocodeAsArr);
-
-            // this.promocodeOneHundred(promocodeAsArr);
+            this.promocodeOneHundred(promocodeAsArr);
          } else if (index_odd.length >= 4) {
-            console.log(index_odd);//
             this.promocodeThousand(promocodeAsArr, index_odd);
-         } 
-
+         }
       }
 
 
       //функция принимает промокод типа number
-      promocodeToArr(promocode) {
+      set promocodeToArr(promocode) {
          if (typeof promocode === "number") {
             let promocodeArr = [];
-
-            console.log(promocode % 10);//
-
             while (promocode) {
                promocodeArr.push(promocode % 10);
                promocode = Math.floor(promocode / 10);
             }
 
-            console.log(promocodeArr);//
             if (promocodeArr.length === 8) {
-               this.mainEvaluation(promocodeArr.reverse());
+               this.mainEvaluation(promocodeArr.reverse()); //промокод восьмизначное число
             }
          }
-
       }
 
       firstEvaluation() {
-         let digit_8 = /^[1-9]\d{7}$/; //эту проверку делать не обязательно 
+         let digit_8 = /^[1-9]\d{7}$/; //эту проверку делать не обязательно
          if (digit_8.test(this.view.input.value)) {
             let promocode = +this.view.input.value; //не может начинаться с нуля
-            console.log(promocode, typeof promocode);//
-            this.promocodeToArr(promocode);
+            this.promocodeToArr = promocode;
          }
       }
 
@@ -142,6 +126,8 @@ document.addEventListener("DOMContentLoaded", () => {
          this.view.input.addEventListener("input", this.firstEvaluation);
       }
 
+
+      //for code generating
       generateCode() {
          let code = Math.floor(Math.random()*10e7);
          console.log(code);
@@ -162,10 +148,9 @@ document.addEventListener("DOMContentLoaded", () => {
    let controller = new Controller(view, model);
 
    controller.getInputValue();
+
    controller.pressButton();
    controller.pressButtonGo();
-   // console.log(controller.result);
-
 
    //script ends
 })
